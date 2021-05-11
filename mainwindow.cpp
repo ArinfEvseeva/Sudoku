@@ -38,30 +38,34 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),ui(std::make_unique<Ui::MainWindow>())
 {
     ui->setupUi(this);
-    matx.new_puzzle();
-    // ui->table->setItemDelegate(new DrawBorderDelegate());
-    for (int i = 0; i < 9; ++i)
-    {
-        for (int j = 0; j < 9; ++j)
-        {
+    ui->tableView->setModel(&m_sudokuModel);
+
+//    matx.new_puzzle();
+//    // ui->table->setItemDelegate(new DrawBorderDelegate());
+//    for (int i = 0; i < 9; ++i)
+//    {
+//        for (int j = 0; j < 9; ++j)
+//        {
 
 
-            QTableWidgetItem* Cell = ui->table->item(i, j);
-            QString str = "";
-            str += '0' + matx.read(i, j);
-            const QString cstr = str;
-            Cell->setText(cstr);
-            Cell->setTextAlignment(Qt::AlignCenter);
-            if (matx.read(i, j))
-            {
-                QColor c(122,122,235);
-                Cell->setBackground(c);
-            }
+//            QTableWidgetItem* Cell = ui->table->item(i, j);
+//            QString str = "";
+//            str += '0' + matx.read(i, j);
+//            const QString cstr = str;
+//            Cell->setText(cstr);
+//            Cell->setTextAlignment(Qt::AlignCenter);
+//            if (matx.read(i, j))
+//            {
+//                QColor c(122,122,235);
+//                Cell->setBackground(c);
+//            }
 
-        }
-    }
+//        }
+//    }
     ui->label->setText("sudoku!!");
     //QObject::connect(ui->pb00_1,&QPushButton::clicked,this,&MainWindow::OnCustiomAction);
+
+
 }
 
 MainWindow::~MainWindow()

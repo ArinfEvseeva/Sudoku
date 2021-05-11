@@ -741,6 +741,19 @@
      <string>reset</string>
     </property>
    </widget>
+   <widget class="QTableView" name="tableView">
+    <property name="geometry">
+     <rect>
+      <x>215</x>
+      <y>300</y>
+      <width>271</width>
+      <height>192</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+   </widget>
    <zorder>table</zorder>
    <zorder>solve</zorder>
    <zorder>pb00_2</zorder>
@@ -754,6 +767,7 @@
    <zorder>pb00_1</zorder>
    <zorder>label</zorder>
    <zorder>pushButton</zorder>
+   <zorder>tableView</zorder>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -770,7 +784,7 @@
      <x>0</x>
      <y>0</y>
      <width>806</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

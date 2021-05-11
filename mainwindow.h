@@ -7,6 +7,7 @@
 #include <QTableWidget>
 #include <memory>
 #include "include.h"
+#include "sudokumodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,7 +20,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+std::unique_ptr<Ui::MainWindow>& getMainWindow() {return ui;}
 private slots:
     void on_pb00_1_clicked();
     void on_pb00_2_clicked();
@@ -48,6 +49,8 @@ private:
     std::unique_ptr<Ui::MainWindow> ui;
     int Column, Row;
     void click__on_pb(int num);
+
+    SudokuModel m_sudokuModel;
 };
 
 #endif // MAINWINDOW_H
