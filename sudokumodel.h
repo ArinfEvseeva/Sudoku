@@ -25,6 +25,11 @@ public:
     bool setData( const QModelIndex& index, const QVariant& value, int role ) override;
 
 
+    int getDifficultLvl() const
+    {
+        return nDifcicult;
+    }
+
 
 
 private:
@@ -32,20 +37,26 @@ private:
     {
         m_sudokuMatrix[0][0] = 1;
         m_sudokuMatrix[0][1] = 2;
-
+ m_sudokuMatrix[0][2] = 3;
 
 
         m_sudokuMatrix[1][0] = 10;
         m_sudokuMatrix[1][1] = 20;
+         m_sudokuMatrix[1][2] = 30;
 
 
+         m_sudokuMatrix[2][0] = 100;
+         m_sudokuMatrix[2][1] = 200;
+          m_sudokuMatrix[2][2] = 300;
 
     }
 
 
+    static const int nDifcicult = 3;
+    static const int nRowLvl = nDifcicult;
+    static const int nColLvl = nDifcicult;
 
-    static const int nRowLvl = 2;
-    static const int nColLvl = 2;
+
 
     unsigned int m_sudokuMatrix[nRowLvl][nColLvl];
 };

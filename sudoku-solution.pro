@@ -14,12 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    mainwindowrefactor.cpp \
     matrix.cc \
     rdarray.cc \
     sudokumodel.cpp
 
 HEADERS  += mainwindow.h \
     include.h \
+    mainwindowrefactor.h \
     matrix.h \
     rdarray.h \
     sudokumodel.h

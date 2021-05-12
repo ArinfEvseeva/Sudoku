@@ -1,5 +1,7 @@
 #include "sudokumodel.h"
 
+#include <QSize>
+
 SudokuModel::SudokuModel()
 {
 FilltestData();
@@ -17,6 +19,12 @@ int SudokuModel::columnCount(const QModelIndex &parent) const
 
 QVariant SudokuModel::data(const QModelIndex &index, int role) const
 {
+
+    if ( role == Qt::TextAlignmentRole)
+           return Qt::AlignCenter;
+
+
+
     if(!index.isValid() || (Qt::EditRole != role && Qt::DisplayRole !=role))
         return QVariant();
 
