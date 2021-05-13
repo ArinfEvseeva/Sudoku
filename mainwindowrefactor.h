@@ -19,11 +19,20 @@ private:
     void CreateControls();
     void CreatePlayArea();
     void CreatePlayButtons();
+    void CreateLvlsMenu();
 
+    void DestroyPlayArea();
+    void DestroyPlayButtons();
 
     QGridLayout* GetMainLayout() const;
 
+public slots:
+    void OnButtonClicked();
+    void OnLvlSelected();
+
 signals:
+
+
 
 
 private:

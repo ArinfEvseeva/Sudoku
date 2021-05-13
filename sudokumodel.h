@@ -1,8 +1,11 @@
 #ifndef SUDOKUMODEL_H
 #define SUDOKUMODEL_H
 
+#include "modelEntities.h"
+
 #include <QObject>
 #include <QAbstractTableModel >
+#include <QVector>
 
 //http://itnotesblog.ru/note.php?id=159
 
@@ -14,25 +17,28 @@ class SudokuModel : public QAbstractTableModel
 public:
     SudokuModel();
 
-    virtual int
-    rowCount(const QModelIndex &parent = QModelIndex()) const  override;
-
-    virtual int
-    columnCount(const QModelIndex &parent = QModelIndex()) const  override;
-
+    int rowCount( const QModelIndex &parent = QModelIndex() ) const override;
+    int columnCount( const QModelIndex &parent = QModelIndex() ) const override;
     QVariant data( const QModelIndex& index, int role ) const override;
-
     bool setData( const QModelIndex& index, const QVariant& value, int role ) override;
 
 
-    int getDifficultLvl() const
+    SudokuLevel& getDifficultLvl()
     {
-        return nDifcicult;
+        return m_allLevels[m_nMenuIndex];
     }
 
+    const SudokuLevel& getDifficultLvl() const
+    {
+        return m_allLevels[m_nMenuIndex];
+    }
 
+    void SetDifficult(const QString& strDifficultName);
+    QVector<SudokuLevel> GetCreatedLvls() const;
 
 private:
+    void CreateLvls();
+
     void FilltestData()
     {
         m_sudokuMatrix[0][0] = 1;
@@ -59,6 +65,10 @@ private:
 
 
     unsigned int m_sudokuMatrix[nRowLvl][nColLvl];
+
+
+    QVector<SudokuLevel> m_allLevels;
+    uint m_nMenuIndex = 0;
 };
 
 

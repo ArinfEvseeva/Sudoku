@@ -4,17 +4,18 @@
 
 SudokuModel::SudokuModel()
 {
+    CreateLvls();
 FilltestData();
 }
 
 int SudokuModel::rowCount(const QModelIndex &parent) const
 {
-    return nRowLvl;
+    return getDifficultLvl().GetRowsCnt();
 }
 
 int SudokuModel::columnCount(const QModelIndex &parent) const
 {
-    return nColLvl;
+    return getDifficultLvl().GetColumnsCnt();
 }
 
 QVariant SudokuModel::data(const QModelIndex &index, int role) const
@@ -31,11 +32,17 @@ QVariant SudokuModel::data(const QModelIndex &index, int role) const
     int nRow = index.row();
     int nCol = index.column();
 
-    return m_sudokuMatrix[nRow][nCol];
+    uint resValue = 0;
+    if(!getDifficultLvl().GetItemValue(nRow, nCol,resValue))
+        return QVariant();
+
+
+    return resValue;
 }
 
 bool SudokuModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+
     if(!index.isValid() || role != Qt::EditRole)
         return false;
 
@@ -47,9 +54,40 @@ bool SudokuModel::setData(const QModelIndex &index, const QVariant &value, int r
     if(!isConversionOk)
         return false;
 
-    m_sudokuMatrix[nRow][nCol] = nSettingValue;
+    getDifficultLvl().SetItemValue(nRow, nCol, nSettingValue);
+
 
     emit dataChanged(index,index);
 
     return true;
+}
+
+void SudokuModel::SetDifficult(const QString& strDifficultName)
+{
+    beginResetModel();
+    int nMenuIndex = 0;
+    for(; nMenuIndex < m_allLevels.count(); ++nMenuIndex)
+    {
+       if( m_allLevels[nMenuIndex] == strDifficultName)
+           break;
+    }
+
+    m_nMenuIndex = nMenuIndex;
+
+    endResetModel();
+}
+
+QVector<SudokuLevel> SudokuModel::GetCreatedLvls() const
+{
+    return m_allLevels;
+}
+
+void SudokuModel::CreateLvls()
+{
+    m_allLevels =
+    {
+        SudokuLevel("4x4",4),
+        SudokuLevel("9x9",9),
+        SudokuLevel("16x16",16)
+    };
 }
