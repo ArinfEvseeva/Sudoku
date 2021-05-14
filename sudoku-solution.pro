@@ -21,6 +21,7 @@ SOURCES += main.cpp\
     sudokumodel.cpp
 
 HEADERS  += mainwindow.h \
+    constants.h \
     include.h \
     mainwindowrefactor.h \
     matrix.h \

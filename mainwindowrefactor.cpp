@@ -7,7 +7,7 @@
 #include <QPushButton>
 #include <QStyledItemDelegate>
 #include <QTableView>
-
+#include <QSizePolicy>
 
 MainWindowRefactor::MainWindowRefactor(QWidget *parent) : QMainWindow(parent)
 {
@@ -44,7 +44,14 @@ void MainWindowRefactor::CreatePlayArea()
     //контейнеру
     QTableView*  pPlayArea = new QTableView();
     pPlayArea->setModel(&m_sudokuModel);
+    pPlayArea->setObjectName(QString::fromUtf8("play_area"));
+    pPlayArea->setFrameShape(QFrame::StyledPanel);
+    pPlayArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    pPlayArea->setSelectionBehavior(QAbstractItemView::SelectItems);
+    pPlayArea->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     QGridLayout* pMainLayout = GetMainLayout();
+
+    //pMainLayout.set
     pMainLayout->addWidget(pPlayArea,0,0);
 
 
@@ -57,44 +64,40 @@ void MainWindowRefactor::CreatePlayArea()
     QHeaderView* pHorizHeader = new QHeaderView(Qt::Orientation::Horizontal, pPlayArea);
     pHorizHeader->hide();
     pPlayArea->setHorizontalHeader(pHorizHeader);
-    pPlayArea->setObjectName(QString::fromUtf8("play_area"));
-    pPlayArea->setFrameShape(QFrame::StyledPanel);
-    pPlayArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    pPlayArea->setSelectionBehavior(QAbstractItemView::SelectItems);
-    pPlayArea->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
-    //установка ширины ячейки
-    const int nCellSizeVertical = pPlayArea->height() / m_sudokuModel.columnCount();
-    for(int nRow = 0; nRow < m_sudokuModel.rowCount(); ++nRow)
-        pPlayArea->setRowHeight(nRow,nCellSizeVertical);
-
-
-    //установка высоты ячейки
-    const int nCellSizeHorizontal = pPlayArea->width() / m_sudokuModel.rowCount();
-    for(int nColumn = 0; nColumn < m_sudokuModel.columnCount(); ++nColumn)
-       pPlayArea->setColumnWidth(nColumn,nCellSizeHorizontal);
-
 
     //шрифт в ячейке
-    QFont font("Arial",21,1);
+    QFont font("Arial",20,1);
     pPlayArea->setFont(font);
+
+    pPlayArea->resizeRowsToContents();
+    pPlayArea->resizeColumnsToContents();
+
 }
 
 void MainWindowRefactor::CreatePlayButtons()
 {
+
+
     QVBoxLayout* pMainButtonLayout = new QVBoxLayout();
     pMainButtonLayout->setObjectName(QString::fromUtf8("play_buttons"));
     QPushButton* pNewGameButton = new QPushButton("new game");
+
     pMainButtonLayout->addWidget(pNewGameButton);
 
-
+    pNewGameButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     QGridLayout* pButtonsNumberLayout = new QGridLayout;
+    pButtonsNumberLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
+
     pMainButtonLayout->addLayout(pButtonsNumberLayout, 1);
+    pMainButtonLayout->addStretch(100);
 
     const int nButtonsInRowCnt = 4;
     for (int nRow = 0, nCounter = 0, splitCouner = 0; nRow < m_sudokuModel.getDifficultLvl().GetDifficultValue(); ++nRow,++splitCouner)
     {
         QPushButton* pNumberButton = new QPushButton(QString::number( ++nCounter));
-        pNumberButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+        pNumberButton->setMaximumSize(50,50);
+        pNumberButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
         //connect signal and slots
         QObject::connect(pNumberButton,&QPushButton::clicked,this,&MainWindowRefactor::OnButtonClicked);
@@ -103,13 +106,14 @@ void MainWindowRefactor::CreatePlayButtons()
         if(splitCouner == nButtonsInRowCnt)
             splitCouner = 0;
 
-
         pButtonsNumberLayout->addWidget(pNumberButton,nRow/nButtonsInRowCnt, splitCouner);
-
     }
+
+
 
     QGridLayout* pMainLayout = GetMainLayout();
     pMainLayout->addLayout(pMainButtonLayout,0,1);
+
 }
 
 void MainWindowRefactor::CreateLvlsMenu()
@@ -119,11 +123,13 @@ void MainWindowRefactor::CreateLvlsMenu()
     QMenu* pLvlMenu = new QMenu("Levels",pLvlMenuBar);
     pLvlMenuBar->addMenu(pLvlMenu);
 
-    const QVector<SudokuLevel>& createdGameLvls = m_sudokuModel.GetCreatedLvls();
-    for(const SudokuLevel& lvl : createdGameLvls)
+
+
+    const QVector<QString>& createdGameLvls = LevelsFactory::GetLevelsName();
+    for(const QString& lvl : createdGameLvls)
     {
-        QAction* pGameLvl = new QAction(lvl.GetName(),pLvlMenu);
-        pGameLvl->setData(lvl.GetName());
+        QAction* pGameLvl = new QAction(lvl,pLvlMenu);
+        pGameLvl->setData(lvl);
         //connect signal and slots
         QObject::connect(pGameLvl,&QAction::triggered,this,&MainWindowRefactor::OnLvlSelected);
         pLvlMenu->addAction(pGameLvl);
@@ -135,19 +141,30 @@ void MainWindowRefactor::DestroyPlayArea()
     QGridLayout* pMainLayout = GetMainLayout();
     QTableView*  pPlayArea = findChild<QTableView*>("play_area");
     pMainLayout->removeWidget(pPlayArea);
+    pPlayArea->deleteLater();
+}
 
-
-
+void remove ( QLayout* layout )
+{
+    QLayoutItem* child;
+    while ( layout->count() != 0 ) {
+        child = layout->takeAt ( 0 );
+        if ( child->layout() != 0 ) {
+            remove ( child->layout() );
+        } else if ( child->widget() != 0 ) {
+            delete child->widget();
+        }
+        delete child;
+    }
 }
 
 void MainWindowRefactor::DestroyPlayButtons()
 {
     QGridLayout* pMainLayout = GetMainLayout();
     QVBoxLayout*  pMainButtonLayout = findChild<QVBoxLayout*>("play_buttons");
+    remove(pMainButtonLayout);
     pMainLayout->removeItem(pMainButtonLayout);
-
-
-
+    pMainButtonLayout->deleteLater();
 }
 
 QGridLayout *MainWindowRefactor::GetMainLayout() const
@@ -183,8 +200,8 @@ void MainWindowRefactor::OnLvlSelected()
         DestroyPlayButtons();
         const QString&  lvlLabel = pCheckedLvl->data().toString();
         m_sudokuModel.SetDifficult(lvlLabel);
-CreatePlayArea();
-CreatePlayButtons();
+        CreatePlayArea();
+        CreatePlayButtons();
     }
 
 }

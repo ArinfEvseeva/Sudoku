@@ -12,8 +12,17 @@ class QGridLayout;
 class MainWindowRefactor : public QMainWindow
 {
     Q_OBJECT
+
 public:
     explicit MainWindowRefactor(QWidget *parent = nullptr);
+
+public slots:
+
+    void OnButtonClicked();
+    void OnLvlSelected();
+
+signals:
+
 
 private:
     void CreateControls();
@@ -26,16 +35,6 @@ private:
 
     QGridLayout* GetMainLayout() const;
 
-public slots:
-    void OnButtonClicked();
-    void OnLvlSelected();
-
-signals:
-
-
-
-
-private:
     SudokuModel m_sudokuModel;
 };
 
