@@ -92,7 +92,8 @@ void MainWindowRefactor::CreatePlayButtons()
     pMainButtonLayout->addStretch(100);
 
     const int nButtonsInRowCnt = 4;
-    for (int nRow = 0, nCounter = 0, splitCouner = 0; nRow < m_sudokuModel.getDifficultLvl().GetDifficultValue(); ++nRow,++splitCouner)
+
+    for (int nRow = 0, nCounter = 0, splitCouner = 0; nRow < m_sudokuModel.GetDifficultValue(); ++nRow,++splitCouner)
     {
         QPushButton* pNumberButton = new QPushButton(QString::number( ++nCounter));
 
