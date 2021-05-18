@@ -33,26 +33,37 @@ private:
     QString m_value = 0;
 };
 
+
+//класс таблицы игры
+class GameTable : public QVector<Cell>
+{
+public:
+
+    Cell* getCell(int nRow, int nCol);
+};
+
 class LevelBuilder;
 
 
 //базовый класс уровня сложности
 class DifficultLvlBase {
 
-  friend class LevelBuilder;
+
 
 public:
 
-  void CreateNewGame();
+  void CreateNewGame(LevelBuilder* pBuilder);
   QString GetName() const {return QString::number(GetRowsCnt()) + " x " + QString::number(GetColumnsCnt());}
 
-  QVector<Cell>& GetTable() {return  m_table;}
-  const QVector<Cell>& GetTable() const {return  m_table;}
+  GameTable& GetTable() {return  m_table;}
+  const GameTable& GetTable() const {return  m_table;}
 
   virtual int GetCellCountingRowAndColumnForRegion() const = 0;
   virtual int GetDifficultValue() const = 0;
   virtual int GetRowsCnt() const = 0;
   virtual int GetColumnsCnt() const = 0;
+  virtual int GetMaxValue() const = 0;
+
   virtual std::unique_ptr<DifficultLvlBase> Clone() const = 0;
 
   virtual ~DifficultLvlBase(){}
@@ -60,7 +71,7 @@ public:
 private:
    void Init();
 
-   QVector<Cell> m_table; //матрица игры
+   GameTable m_table; //матрица игры
 };
 
 
@@ -69,9 +80,10 @@ class DifficultLvl_4_4 : public DifficultLvlBase {
 
 public:
     int GetCellCountingRowAndColumnForRegion() const override {return 2;}
-    int GetDifficultValue() const override{return 4;}
-    int GetRowsCnt() const override{return 4;}
-    int GetColumnsCnt() const override{return 4;}
+    int GetDifficultValue() const override {return 4;}
+    int GetRowsCnt() const override {return 4;}
+    int GetColumnsCnt() const override {return 4;}
+    int GetMaxValue() const override {return 4;}
     std::unique_ptr<DifficultLvlBase> Clone() const override;
 };
 
@@ -80,9 +92,10 @@ class DifficultLvl_9_9 : public DifficultLvlBase {
 
 public:
     int GetCellCountingRowAndColumnForRegion() const override {return 3;}
-    int GetDifficultValue() const override{return 9;}
-    int GetRowsCnt() const override{return 9;}
-    int GetColumnsCnt() const override{return 9;}
+    int GetDifficultValue() const override {return 9;}
+    int GetRowsCnt() const override {return 9;}
+    int GetColumnsCnt() const override {return 9;}
+    int GetMaxValue() const override {return 9;}
     std::unique_ptr<DifficultLvlBase> Clone() const override;
 };
 
@@ -94,6 +107,7 @@ public:
     int GetDifficultValue() const override{return 16;}
     int GetRowsCnt() const override{return 16;}
     int GetColumnsCnt() const override{return 16;}
+    int GetMaxValue() const override {return 16;}
     std::unique_ptr<DifficultLvlBase> Clone() const override;
 };
 
@@ -101,25 +115,7 @@ public:
 
 
 
-class LevelBuilder
-{
-public:
-    explicit LevelBuilder(DifficultLvlBase* currentLvl) : m_currentLvl(currentLvl){}
 
-    void MakeLevel()
-    {
-
-        m_currentLvl->m_table;
-        //
-    }
-
-
-
-
-private:
-
-    DifficultLvlBase* m_currentLvl;
-};
 
 
 

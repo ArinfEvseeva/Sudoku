@@ -7,9 +7,8 @@
 #include <QVector>
 #include <memory>
 #include <vector>
+
 //http://itnotesblog.ru/note.php?id=159
-
-
 
 
 //Сама игра (механика)
@@ -25,11 +24,42 @@ public:
    void SetItemValue(int nRow, int nCol, const QString& value);
 
 private:
-   bool GetRequiredCell(int nRow, int nCol, Cell*& outCell) const;
 
-   std::unique_ptr<DifficultLvlBase> m_pLevel;
+   mutable std::unique_ptr<DifficultLvlBase> m_pLevel;
 };
 
+
+//фабрика для генерации уровня
+class LevelsFactory
+{
+public:
+    static  std::unique_ptr<DifficultLvlBase> Create(const QString& strDifficultName);
+    static QVector<QString> GetLevelsName();
+    static std::vector<std::unique_ptr<DifficultLvlBase>>& GetAvailableLevels();
+};
+
+
+//класс, отвечающий за логику генерации
+//сетки судоку
+class LevelBuilder
+{
+
+
+
+public:
+
+    void MakeLevel(DifficultLvlBase* pCurrentLvl);
+
+private:
+    //генерация основной базовой сетки
+    void CreateBaseGrid();
+
+
+    //void GreateNumbers();
+
+    DifficultLvlBase* m_pCurrentLvl;
+
+};
 
 class SudokuModel : public QAbstractTableModel
 {
@@ -51,17 +81,4 @@ private:
 
     SudokuGame m_Game;
 };
-
-
-//фабрика для генерации уровня
-class LevelsFactory
-{
-public:
-    static  std::unique_ptr<DifficultLvlBase> Create(const QString& strDifficultName);
-    static QVector<QString> GetLevelsName();
-
-    static std::vector<std::unique_ptr<DifficultLvlBase>>& GetAvailableLevels();
-};
-
-
 #endif // SUDOKUMODEL_H

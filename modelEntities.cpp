@@ -1,13 +1,12 @@
 #include "modelEntities.h"
+#include "sudokumodel.h"
 
 
 
-void DifficultLvlBase::CreateNewGame()
+void DifficultLvlBase::CreateNewGame(LevelBuilder* pBuilder)
 {
     Init();
-
-    LevelBuilder builder(this);
-    builder.MakeLevel(); //TODO: male lvl
+    pBuilder->MakeLevel(this);
 }
 
 void DifficultLvlBase::Init()
@@ -29,3 +28,20 @@ std::unique_ptr<DifficultLvlBase> DifficultLvl_4_4::Clone() const{return std::ma
 std::unique_ptr<DifficultLvlBase> DifficultLvl_9_9::Clone() const{return std::make_unique<DifficultLvl_9_9>();}
 
 std::unique_ptr<DifficultLvlBase> DifficultLvl_16_16::Clone() const{return std::make_unique<DifficultLvl_16_16>();}
+
+Cell *GameTable::getCell(int nRow, int nCol) {
+
+    Cell proxyCell(nRow, nCol);
+
+    for(int n = 0; n < size(); ++n)
+    {
+        auto& data = operator[](n);
+
+
+        if( data == proxyCell)
+        {
+            return &data;
+        }
+    }
+    return nullptr;
+}
