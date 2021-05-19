@@ -16,6 +16,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     mainwindowrefactor.cpp \
     matrix.cc \
+    mixingVariants.cpp \
     modelEntities.cpp \
     rdarray.cc \
     sudokumodel.cpp
@@ -25,6 +26,7 @@ HEADERS  += mainwindow.h \
     include.h \
     mainwindowrefactor.h \
     matrix.h \
+    mixingVariants.h \
     modelEntities.h \
     rdarray.h \
     sudokumodel.h

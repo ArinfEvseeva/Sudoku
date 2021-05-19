@@ -26,6 +26,8 @@ public:
     void SetValue(QString value) {m_value = value; }
     QString GetValue() const {return m_value; }
 
+    void Swap(Cell& other);
+
 private:
     int m_nRow = NOT_FOUND;
     int m_nCol = NOT_FOUND;

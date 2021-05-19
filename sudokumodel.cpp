@@ -1,3 +1,4 @@
+#include "mixingVariants.h"
 #include "sudokumodel.h"
 #include <QMessageBox>
 #include <QSize>
@@ -5,70 +6,6 @@
 
 
 
-//базовый класс вариантов генерации сетки
-class MixingVariantBase
-{
-public:
-    virtual void Invoke(DifficultLvlBase* pCurrentLvl) = 0;
-    virtual ~MixingVariantBase(){}
-};
-
-//Транспонирование всей таблицы — столбцы становятся строками и наоборот (transposing)
-class TranspositionVariant : public MixingVariantBase
-{
-public:
-    void Invoke(DifficultLvlBase* pCurrentLvl) override
-    {
-        GameTable& gametable = pCurrentLvl->GetTable();
-
-        for(int row = 0; row < pCurrentLvl->GetRowsCnt(); ++row)
-        {
-            for(int col = row; col < pCurrentLvl->GetColumnsCnt(); ++col)
-            {
-
-                Cell* pFirstCell = gametable.getCell(row, col);
-                Cell* pSecondCell = gametable.getCell(col, row);
-
-                if(pFirstCell && pSecondCell)
-                {
-                    QString strTmp = pFirstCell->GetValue();
-                    pFirstCell->SetValue(pSecondCell->GetValue());
-                    pSecondCell->SetValue(strTmp);
-                }
-
-            }
-        }
-    }
-};
-
-//Обмен двух строк в пределах одного района
-class SwapRowsSmallVariant : public MixingVariantBase
-{
-  public:
-    void Invoke(DifficultLvlBase* pCurrentLvl) override
-    {
-        GameTable& gametable = pCurrentLvl->GetTable();
-        int nCellCounting = pCurrentLvl->GetCellCountingRowAndColumnForRegion();
-       /* for(int row = 0; row < pCurrentLvl->GetRowsCnt(); ++row)
-        {
-            for(int col = 0; col < pCurrentLvl->GetColumnsCnt(); ++col)
-            {
-
-                Cell* pFirstCell = gametable.getCell(row, col);
-                Cell* pSecondCell = gametable.getCell(col, row);
-
-                if(pFirstCell && pSecondCell)
-                {
-                    QString strTmp = pFirstCell->GetValue();
-                    pFirstCell->SetValue(pSecondCell->GetValue());
-                    pSecondCell->SetValue(strTmp);
-                }
-
-            }
-        }*/
-
-    }
-};
 
 
 SudokuModel::SudokuModel()
@@ -245,7 +182,7 @@ void LevelBuilder::MakeLevel(DifficultLvlBase *pCurrentLvl)
     CreateBaseGrid();
 
     //Шаг 2. Перетасовать сетку
-    TranspositionVariant().Invoke(m_pCurrentLvl);
+    SudokuGenerator().Invoke(m_pCurrentLvl);
 }
 
 void LevelBuilder::CreateBaseGrid()

@@ -45,3 +45,10 @@ Cell *GameTable::getCell(int nRow, int nCol) {
     }
     return nullptr;
 }
+
+void Cell::Swap(Cell &other)
+{
+    QString strTmp = m_value;
+    m_value = other.m_value;
+    other.m_value = strTmp;
+}
