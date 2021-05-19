@@ -1,206 +1,208 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QStyledItemDelegate>
+#include <QGridLayout>
+#include <QHeaderView>
+
+#include <QMenuBar>
 #include <QPainter>
-sudoku::matrix matx;
+#include <QPushButton>
+#include <QStyledItemDelegate>
+#include <QTableView>
+#include <QSizePolicy>
 
-class DrawBorderDelegate : public QStyledItemDelegate
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-public:
-     DrawBorderDelegate( QObject* parent = 0 ) : QStyledItemDelegate( parent ) {}
-     void paint( QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index ) const override{
-         const QRect rect( option.rect );
-         QPen penHLines(QColor("#0e5a77"), 10, Qt::SolidLine, Qt::FlatCap, Qt::RoundJoin);
-         painter->setPen(penHLines);
-         painter->drawLine( rect.topLeft(), rect.topRight() );
-         painter->drawLine( rect.bottomLeft(), rect.bottomRight() );
+    CreateControls();
+}
 
-             // Draw left edge of left-most cell
-            // if ( index.column() == 0 )
-                 painter->drawLine( rect.topLeft(), rect.bottomLeft() );
-
-             // Draw right edge of right-most cell
-            // if ( index.column() == index.model()->columnCount() - 1 )
-                 painter->drawLine( rect.topRight(), rect.bottomRight() );
-
-         QStyledItemDelegate::paint( painter, option, index );
-
-
-
-     }
-
-}; // DrawBorderDelegate
-
-
-
-
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),ui(std::make_unique<Ui::MainWindow>())
+void MainWindow::CreateControls()
 {
-    ui->setupUi(this);
-    ui->tableView->setModel(&m_sudokuModel);
-
-//    matx.new_puzzle();
-//    // ui->table->setItemDelegate(new DrawBorderDelegate());
-//    for (int i = 0; i < 9; ++i)
-//    {
-//        for (int j = 0; j < 9; ++j)
-//        {
+    setWindowTitle("Sudoku");
+    resize(QSize(800,600));
 
 
-//            QTableWidgetItem* Cell = ui->table->item(i, j);
-//            QString str = "";
-//            str += '0' + matx.read(i, j);
-//            const QString cstr = str;
-//            Cell->setText(cstr);
-//            Cell->setTextAlignment(Qt::AlignCenter);
-//            if (matx.read(i, j))
-//            {
-//                QColor c(122,122,235);
-//                Cell->setBackground(c);
-//            }
+    //создание виджета для отрисовки (главный виджет)
+    QWidget* pCentralWidget = new QWidget(this);
+    setCentralWidget(pCentralWidget);
 
-//        }
-//    }
-    ui->label->setText("sudoku!!");
-    //QObject::connect(ui->pb00_1,&QPushButton::clicked,this,&MainWindow::OnCustiomAction);
+    //создание компоновочного контейнера
+    QGridLayout* pMainLayout = new QGridLayout();
+    pCentralWidget->setLayout(pMainLayout);
 
+    //создание игрового поля
+    CreatePlayArea();
+
+    //создание кнопок управления
+    CreatePlayButtons();
+
+    //создание меню с уровнями сложности
+    CreateLvlsMenu();
+}
+
+void MainWindow::CreatePlayArea()
+{
+    //создание игрового поля и привязка к компоновочному
+    //контейнеру
+    QTableView*  pPlayArea = new QTableView();
+    pPlayArea->setModel(&m_sudokuModel);
+    pPlayArea->setObjectName(QString::fromUtf8("play_area"));
+    pPlayArea->setFrameShape(QFrame::StyledPanel);
+    pPlayArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    pPlayArea->setSelectionBehavior(QAbstractItemView::SelectItems);
+    pPlayArea->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+    QGridLayout* pMainLayout = GetMainLayout();
+
+    //pMainLayout.set
+    pMainLayout->addWidget(pPlayArea,0,0);
+
+
+    //скрытие вертикальной нумерации
+    QHeaderView* pVerticalHeader = new QHeaderView(Qt::Orientation::Vertical,pPlayArea);
+    pVerticalHeader->hide();
+    pPlayArea->setVerticalHeader(pVerticalHeader);
+
+    //скрытие горизонтальной нумерации
+    QHeaderView* pHorizHeader = new QHeaderView(Qt::Orientation::Horizontal, pPlayArea);
+    pHorizHeader->hide();
+    pPlayArea->setHorizontalHeader(pHorizHeader);
+
+    //шрифт в ячейке
+    QFont font("Arial",20,1);
+    pPlayArea->setFont(font);
+
+    pPlayArea->resizeRowsToContents();
+    pPlayArea->resizeColumnsToContents();
 
 }
 
-MainWindow::~MainWindow()
+void MainWindow::CreatePlayButtons()
 {
 
-}
 
+    QVBoxLayout* pMainButtonLayout = new QVBoxLayout();
+    pMainButtonLayout->setObjectName(QString::fromUtf8("play_buttons"));
+    QPushButton* pNewGameButton = new QPushButton("new game");
 
+    pMainButtonLayout->addWidget(pNewGameButton);
 
-void MainWindow::on_table_cellClicked(int row, int column)
-{
-    Row = row;
-    Column = column;
-    QString str = "";
-    str += '0' + row;
-    str += ',';
-    str += '0' + column;
-    const QString cstr = str;
-    ui->label->setText(cstr);
-}
+    pNewGameButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    QGridLayout* pButtonsNumberLayout = new QGridLayout;
+    pButtonsNumberLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
 
-void MainWindow::click__on_pb(int num)
-{
-    QTableWidgetItem* Cell = ui->table->item(Row, Column);
-    matx.write(Row, Column, num);
-    QString str = "";
-    str += '0' + matx.read(Row, Column);
-    const QString cstr = str;
-    Cell->setText(cstr);
-    if (matx.you_win())
+    pMainButtonLayout->addLayout(pButtonsNumberLayout, 1);
+    pMainButtonLayout->addStretch(100);
+
+    const int nButtonsInRowCnt = 4;
+
+    for (int nRow = 0, nCounter = 0, splitCouner = 0; nRow < m_sudokuModel.GetDifficultValue(); ++nRow,++splitCouner)
     {
-        ui->label->setText("you win!!");
+        QPushButton* pNumberButton = new QPushButton(QString::number( ++nCounter));
+
+        pNumberButton->setMaximumSize(50,50);
+        pNumberButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+        //connect signal and slots
+        QObject::connect(pNumberButton,&QPushButton::clicked,this,&MainWindow::OnButtonClicked);
+
+
+        if(splitCouner == nButtonsInRowCnt)
+            splitCouner = 0;
+
+        pButtonsNumberLayout->addWidget(pNumberButton,nRow/nButtonsInRowCnt, splitCouner);
+    }
+
+
+
+    QGridLayout* pMainLayout = GetMainLayout();
+    pMainLayout->addLayout(pMainButtonLayout,0,1);
+
+}
+
+void MainWindow::CreateLvlsMenu()
+{
+    QMenuBar* pLvlMenuBar = new QMenuBar(this);
+    setMenuBar(pLvlMenuBar);
+    QMenu* pLvlMenu = new QMenu("Levels",pLvlMenuBar);
+    pLvlMenuBar->addMenu(pLvlMenu);
+
+
+
+    const QVector<QString>& createdGameLvls = LevelsFactory::GetLevelsName();
+    for(const QString& lvl : createdGameLvls)
+    {
+        QAction* pGameLvl = new QAction(lvl,pLvlMenu);
+        pGameLvl->setData(lvl);
+        //connect signal and slots
+        QObject::connect(pGameLvl,&QAction::triggered,this,&MainWindow::OnLvlSelected);
+        pLvlMenu->addAction(pGameLvl);
     }
 }
 
-void MainWindow::on_pb00_1_clicked()
+void MainWindow::DestroyPlayArea()
 {
-   click__on_pb(1);
+    QGridLayout* pMainLayout = GetMainLayout();
+    QTableView*  pPlayArea = findChild<QTableView*>("play_area");
+    pMainLayout->removeWidget(pPlayArea);
+    pPlayArea->deleteLater();
 }
 
-void MainWindow::on_pb00_2_clicked()
+void remove ( QLayout* layout )
 {
-    click__on_pb(2);
-}
-
-void MainWindow::on_pb00_3_clicked()
-{
-    click__on_pb(3);
-}
-
-void MainWindow::on_pb00_4_clicked()
-{
-    click__on_pb(4);
-}
-
-void MainWindow::on_pb00_5_clicked()
-{
-    click__on_pb(5);
-}
-
-void MainWindow::on_pb00_6_clicked()
-{
-    click__on_pb(6);
-}
-
-void MainWindow::on_pb00_7_clicked()
-{
-    click__on_pb(7);
-}
-
-void MainWindow::on_pb00_8_clicked()
-{
-    click__on_pb(8);
-}
-
-void MainWindow::on_pb00_9_clicked()
-{
-    click__on_pb(9);
-}
-
-void MainWindow::on_solve_clicked()
-{
-    matx.reset();
-    matx.solve();
-    for (int i = 0; i < 9; ++i)
-	{
-        for (int j = 0; j < 9; ++j)
-		{
-			QTableWidgetItem* Cell = ui->table->item(i, j);
-			QString str = "";
-            str += '0' + matx.read(i,j);
-			const QString cstr = str;
-			Cell->setText(cstr);
-		}
-	}
-}
-
-void MainWindow::on_actionNew_game_triggered()
-{
-    matx.new_puzzle();
-    for (int i = 0; i < 9; ++i)
-    {
-        for (int j = 0; j < 9; ++j)
-        {
-            QTableWidgetItem* Cell = ui->table->item(i, j);
-            QString str = "";
-            str += '0' + matx.read(i, j);
-            const QString cstr = str;
-            Cell->setText(cstr);
-            if (matx.read(i, j))
-            {
-                QColor c(122,122,235);
-                Cell->setBackground(c);
-            }
-            else
-            {
-                QColor c(255,255,255);
-                Cell->setBackground(c);
-            }
+    QLayoutItem* child;
+    while ( layout->count() != 0 ) {
+        child = layout->takeAt ( 0 );
+        if ( child->layout() != 0 ) {
+            remove ( child->layout() );
+        } else if ( child->widget() != 0 ) {
+            delete child->widget();
         }
+        delete child;
     }
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::DestroyPlayButtons()
 {
-    matx.reset();
-    for (int i = 0; i < 9; ++i)
-    {
-        for (int j = 0; j < 9; ++j)
-        {
-            QTableWidgetItem* Cell = ui->table->item(i, j);
-            QString str = "";
-            str += '0' + matx.read(i, j);
-            const QString cstr = str;
-            Cell->setText(cstr);
-        }
+    QGridLayout* pMainLayout = GetMainLayout();
+    QVBoxLayout*  pMainButtonLayout = findChild<QVBoxLayout*>("play_buttons");
+    remove(pMainButtonLayout);
+    pMainLayout->removeItem(pMainButtonLayout);
+    pMainButtonLayout->deleteLater();
+}
+
+QGridLayout *MainWindow::GetMainLayout() const
+{
+    QWidget *pCentralWidget = centralWidget();
+    QGridLayout* pMainLayout = static_cast<QGridLayout*>(pCentralWidget->layout());
+    return pMainLayout;
+}
+
+void MainWindow::OnButtonClicked()
+{
+    QPushButton* pButton = qobject_cast<QPushButton*>(sender());
+    if (pButton) // this is the type we expect
+     {
+         const QString& buttonText = pButton->text();
+
+         QTableView*  pPlayArea = findChild<QTableView*>("play_area");
+         if(pPlayArea)
+         {
+            QModelIndex index = pPlayArea->selectionModel()->currentIndex();
+            m_sudokuModel.setData(index,buttonText,Qt::EditRole);
+            pPlayArea->setFocus();
+         }
     }
+}
+
+void MainWindow::OnLvlSelected()
+{
+    QAction* pCheckedLvl = qobject_cast<QAction*>(sender());
+    if (pCheckedLvl)
+    {
+        DestroyPlayArea();
+        DestroyPlayButtons();
+        const QString&  lvlLabel = pCheckedLvl->data().toString();
+        m_sudokuModel.SetDifficult(lvlLabel);
+        CreatePlayArea();
+        CreatePlayButtons();
+    }
+
 }

@@ -13,22 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    mainwindowrefactor.cpp \
-    matrix.cc \
+    mainwindow.cpp \
     mixingVariants.cpp \
     modelEntities.cpp \
-    rdarray.cc \
     sudokumodel.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     constants.h \
-    include.h \
-    mainwindowrefactor.h \
-    matrix.h \
+    mainwindow.h \
     mixingVariants.h \
     modelEntities.h \
-    rdarray.h \
     sudokumodel.h
 
-FORMS    += mainwindow.ui
+FORMS    +=

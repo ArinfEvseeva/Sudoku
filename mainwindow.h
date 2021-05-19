@@ -1,56 +1,41 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOWREFACTOR_H
+#define MAINWINDOWREFACTOR_H
 
-#include <QMainWindow>
-#include <QLabel>
-#include <QString>
-#include <QTableWidget>
-#include <memory>
-#include "include.h"
 #include "sudokumodel.h"
 
-namespace Ui {
-class MainWindow;
-}
+#include <QMainWindow>
+#include <QObject>
+
+
+class QGridLayout;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-std::unique_ptr<Ui::MainWindow>& getMainWindow() {return ui;}
-private slots:
-    void on_pb00_1_clicked();
-    void on_pb00_2_clicked();
-    void on_pb00_3_clicked();
-    void on_pb00_4_clicked();
-    void on_pb00_5_clicked();
-    void on_pb00_6_clicked();
-    void on_pb00_7_clicked();
-    void on_pb00_8_clicked();
-    void on_pb00_9_clicked();
-    void on_table_cellClicked(int row, int column);
+    explicit MainWindow(QWidget *parent = nullptr);
 
-    void on_solve_clicked();
+public slots:
 
-    void on_actionNew_game_triggered();
+    void OnButtonClicked();
+    void OnLvlSelected();
 
-    void on_pushButton_clicked();
-
-    //void OnCustiomAction(){
-
-     //   int n = 1;
-   // }
+signals:
 
 
 private:
-    std::unique_ptr<Ui::MainWindow> ui;
-    int Column, Row;
-    void click__on_pb(int num);
+    void CreateControls();
+    void CreatePlayArea();
+    void CreatePlayButtons();
+    void CreateLvlsMenu();
+
+    void DestroyPlayArea();
+    void DestroyPlayButtons();
+
+    QGridLayout* GetMainLayout() const;
 
     SudokuModel m_sudokuModel;
 };
 
-#endif // MAINWINDOW_H
+#endif // MAINWINDOWREFACTOR_H
