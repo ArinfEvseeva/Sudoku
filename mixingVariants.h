@@ -9,7 +9,7 @@
 
 class Randomizer
 {
-   public:
+public:
     static int GetValue(int nMin, int nMax);
 };
 
@@ -32,21 +32,21 @@ public:
 // 2 Обмен двух строк в пределах одного района
 class SwapRowsSmallVariant : public MixingVariantBase
 {
-  public:
+public:
     void Invoke(DifficultLvlBase* pCurrentLvl) override;
 };
 
 // 3 Обмен двух столбцов в пределах одного района
 class SwapColumnsSmallVariant : public MixingVariantBase
 {
-  public:
+public:
     void Invoke(DifficultLvlBase* pCurrentLvl) override;
 };
 
 // 4 Обмен двух районов по горизонтали
 class SwapRowsAreaVariant : public MixingVariantBase
 {
-  public:
+public:
     void Invoke(DifficultLvlBase* pCurrentLvl) override;
 };
 
@@ -54,7 +54,7 @@ class SwapRowsAreaVariant : public MixingVariantBase
 // 5 Обмен двух районов по вертикали
 class SwapColumnsAreaVariant : public MixingVariantBase
 {
-  public:
+public:
     void Invoke(DifficultLvlBase* pCurrentLvl) override;
 };
 
@@ -69,8 +69,19 @@ public:
 
     void Invoke(DifficultLvlBase* pCurrentLvl);
 
+
 private:
     void InitGenerationVariants();
+
+    //примение алгоритмов смешивания значений
+    void MixOriginalGrid(DifficultLvlBase* pCurrentLvl);
+    //копирование эталонной сетки в игровую
+    void CopyOriginalToPlayGrid(DifficultLvlBase* pCurrentLvl);
+    //скрытие некоторых ячеек игровой сетки
+    void MakeInvisibleSomeCells(DifficultLvlBase* pCurrentLvl);
+
+    //скрытие рандомной строки и столбца
+    void MakeInvisibleRandomRowAndColumn(DifficultLvlBase* pCurrentLvl);
 
     std::vector<std::unique_ptr<MixingVariantBase>> m_levels;
 

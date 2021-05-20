@@ -4,7 +4,7 @@
 
 int Randomizer::GetValue(int nMin, int nMax)
 {
-   int nOutput = QRandomGenerator::global()->bounded(nMin, nMax);
+   int nOutput = QRandomGenerator::global()->bounded(nMin, nMax + 1);
   // qDebug()<< nOutput;
    return nOutput;
 }
@@ -13,15 +13,15 @@ int Randomizer::GetValue(int nMin, int nMax)
 
 void TranspositionVariant::Invoke(DifficultLvlBase *pCurrentLvl)
 {
-    GameTable& gametable = pCurrentLvl->GetTable();
+    GameTable& gametable = pCurrentLvl->GetOriginalTable();
 
     for(int row = 0; row < pCurrentLvl->GetRowsCnt(); ++row)
     {
         for(int col = row; col < pCurrentLvl->GetColumnsCnt(); ++col)
         {
 
-            Cell* pFirstCell = gametable.getCell(row, col);
-            Cell* pSecondCell = gametable.getCell(col, row);
+            Cell* pFirstCell = gametable.GetCell(row, col);
+            Cell* pSecondCell = gametable.GetCell(col, row);
 
             if(pFirstCell && pSecondCell)
                 pFirstCell->Swap(*pSecondCell);
@@ -46,12 +46,12 @@ void SwapRowsSmallVariant::Invoke(DifficultLvlBase *pCurrentLvl)
      //номер 2 строки для обмена
     int nRow2 = nArea * nCellCounting + nline2;
 
-    GameTable& gametable = pCurrentLvl->GetTable();
+    GameTable& gametable = pCurrentLvl->GetOriginalTable();
 
     for(int col = 0; col < pCurrentLvl->GetColumnsCnt(); ++col)
     {
-        Cell* pFirstCell = gametable.getCell(nRow1, col);
-        Cell* pSecondCell = gametable.getCell(nRow2, col);
+        Cell* pFirstCell = gametable.GetCell(nRow1, col);
+        Cell* pSecondCell = gametable.GetCell(nRow2, col);
 
         if(pFirstCell && pSecondCell)
             pFirstCell->Swap(*pSecondCell);
@@ -79,7 +79,7 @@ void SwapRowsAreaVariant::Invoke(DifficultLvlBase *pCurrentLvl)
         nArea2 = Randomizer::GetValue(0, nCellCounting);
 
 
-     GameTable& gametable = pCurrentLvl->GetTable();
+     GameTable& gametable = pCurrentLvl->GetOriginalTable();
 
     for(int i = 0; i < nCellCounting; ++i)
     {
@@ -88,8 +88,8 @@ void SwapRowsAreaVariant::Invoke(DifficultLvlBase *pCurrentLvl)
 
         for(int nCol = 0; nCol < pCurrentLvl->GetColumnsCnt(); ++nCol)
         {
-            Cell* pFirstCell = gametable.getCell(nRow1, nCol);
-            Cell* pSecondCell = gametable.getCell(nRow2, nCol);
+            Cell* pFirstCell = gametable.GetCell(nRow1, nCol);
+            Cell* pSecondCell = gametable.GetCell(nRow2, nCol);
 
             if(pFirstCell && pSecondCell)
                 pFirstCell->Swap(*pSecondCell);
@@ -114,16 +114,11 @@ SudokuGenerator::SudokuGenerator(int nMaxAttemptsCnt) : m_nMaxAttemptsCnt(nMaxAt
     InitGenerationVariants();
 }
 
-void SudokuGenerator::Invoke(DifficultLvlBase *pCurrentLvl)
+void SudokuGenerator::Invoke(DifficultLvlBase* pCurrentLvl)
 {
-    while (m_nMaxAttemptsCnt != 0) {
-        int nVariant = Randomizer::GetValue(0, m_levels.size() - 1);
-        qDebug()<< nVariant;
-        m_levels[nVariant]->Invoke(pCurrentLvl);
-        --m_nMaxAttemptsCnt;
-    }
-
-    //TODO: скрыть ячейки и оставить от балды ячейки
+    MixOriginalGrid(pCurrentLvl);
+    CopyOriginalToPlayGrid(pCurrentLvl);
+    MakeInvisibleSomeCells(pCurrentLvl);
 }
 
 void SudokuGenerator::InitGenerationVariants()
@@ -132,5 +127,59 @@ void SudokuGenerator::InitGenerationVariants()
     m_levels.push_back(std::make_unique<SwapRowsSmallVariant>());
     m_levels.push_back(std::make_unique<SwapColumnsSmallVariant>());
     m_levels.push_back(std::make_unique<SwapRowsAreaVariant>());
-    m_levels.push_back(std::make_unique<SwapColumnsAreaVariant>());
+    //m_levels.push_back(std::make_unique<SwapColumnsAreaVariant>());
+}
+
+void SudokuGenerator::MixOriginalGrid(DifficultLvlBase *pCurrentLvl)
+{
+    while (m_nMaxAttemptsCnt != 0) {
+        int nVariant = Randomizer::GetValue(0, m_levels.size() - 1);
+        qDebug()<< nVariant;
+        m_levels[nVariant]->Invoke(pCurrentLvl);
+        --m_nMaxAttemptsCnt;
+    }
+}
+
+void SudokuGenerator::CopyOriginalToPlayGrid(DifficultLvlBase *pCurrentLvl)
+{
+    for(int nRow = 0; nRow < pCurrentLvl->GetRowsCnt(); ++nRow)
+    {
+        for(int nCol = 0; nCol < pCurrentLvl->GetColumnsCnt(); ++nCol)
+        {
+            Cell* pOrigCell = pCurrentLvl->GetOriginalTable().GetCell(nRow, nCol);
+            Cell* pPlayingCell = pCurrentLvl->GetPlayingTable().GetCell(nRow, nCol);
+            *pPlayingCell = *pOrigCell;
+        }
+
+    }
+
+}
+
+void SudokuGenerator::MakeInvisibleSomeCells(DifficultLvlBase *pCurrentLvl)
+{
+
+    int nMaxInvisibleCells = pCurrentLvl->GetMaxInvisibleCells();
+
+    while (nMaxInvisibleCells > 0) {
+
+        MakeInvisibleRandomRowAndColumn(pCurrentLvl);
+        --nMaxInvisibleCells;
+
+    }
+
+}
+
+void SudokuGenerator::MakeInvisibleRandomRowAndColumn(DifficultLvlBase *pCurrentLvl)
+{
+    while (true)
+    {
+        int nRow = Randomizer::GetValue(0, pCurrentLvl->GetRowsCnt() - 1);
+        int nCol = Randomizer::GetValue(0, pCurrentLvl->GetColumnsCnt() - 1);
+
+        Cell* pCell = pCurrentLvl->GetPlayingTable().GetCell(nRow, nCol);
+        if(pCell && eInvisible != pCell->GetState()){
+            pCell->SetState(eInvisible);
+            break;
+        }
+    }
 }

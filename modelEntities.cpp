@@ -15,28 +15,27 @@ void DifficultLvlBase::Init()
     {
         for(int nCol = 0; nCol < GetColumnsCnt(); ++ nCol)
         {
-            //Todo write generator
-            Cell newCell(nRow, nCol,false);
+            Cell newCell(nRow, nCol);
             newCell.SetValue("0");
-            m_table.push_back(newCell);
+            m_originalTable.push_back(newCell);
+            m_playingTable.push_back(newCell);
         }
     }
 }
 
-std::unique_ptr<DifficultLvlBase> DifficultLvl_4_4::Clone() const{return std::make_unique<DifficultLvl_4_4>();}
+std::unique_ptr<DifficultLvlBase> DifficultLvl_4_4::Clone() const {return std::make_unique<DifficultLvl_4_4>();}
 
-std::unique_ptr<DifficultLvlBase> DifficultLvl_9_9::Clone() const{return std::make_unique<DifficultLvl_9_9>();}
+std::unique_ptr<DifficultLvlBase> DifficultLvl_9_9::Clone() const {return std::make_unique<DifficultLvl_9_9>();}
 
-std::unique_ptr<DifficultLvlBase> DifficultLvl_16_16::Clone() const{return std::make_unique<DifficultLvl_16_16>();}
+std::unique_ptr<DifficultLvlBase> DifficultLvl_16_16::Clone() const {return std::make_unique<DifficultLvl_16_16>();}
 
-Cell *GameTable::getCell(int nRow, int nCol) {
+Cell *GameTable::GetCell(int nRow, int nCol)const {
 
     Cell proxyCell(nRow, nCol);
 
-    for(int n = 0; n < size(); ++n)
+    for(int n = 0; n < m_table.size(); ++n)
     {
-        auto& data = operator[](n);
-
+        auto& data = m_table[n];
 
         if( data == proxyCell)
         {
