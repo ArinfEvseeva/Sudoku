@@ -20,6 +20,7 @@ public slots:
     void OnButtonClicked();
     void OnNewGameClicked();
     void OnLvlSelected();
+    void OnSaveToFileClicked();
 
 signals:
 

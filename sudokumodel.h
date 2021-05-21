@@ -19,6 +19,8 @@ public:
 
     const std::unique_ptr<DifficultLvlBase>& GetLevel() const {return m_pLevel;}
 
+    QString GetName() const{return "Sudoku";}
+
 
     bool GetItemValue(int nRow, int nCol, QString& outValue) const;
     void SetItemValue(int nRow, int nCol, const QString& value);
@@ -30,6 +32,11 @@ public:
     bool IsCellChangingLocked(int nRow, int nCol) const;
     bool IsRequiredValue(int nRow, int nCol, const QString& value) const;
     void SetState(int nRow, int nCol,CellState state);
+
+    bool IsFinished() const;
+
+    void Save(const QString& strPath) const;
+
 
 private:
     Cell* GetPlayingCell(int nRow, int nCol) const;
@@ -77,6 +84,12 @@ public:
     void SetDifficult(const QString& strDifficultName);
 
     void NewGame();
+
+    bool IsGameFinished() const;
+
+    QString GetGameName() const;
+
+    void SaveGame(const QString& strPath) const {m_Game.Save(strPath);}
 
 private:
 

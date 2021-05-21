@@ -8,6 +8,8 @@
 #include <QStyledItemDelegate>
 #include <QTableView>
 #include <QSizePolicy>
+#include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -85,6 +87,7 @@ void MainWindow::CreatePlayButtons()
     pMainButtonLayout->addWidget(pNewGameButton);
 
     pNewGameButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
     QGridLayout* pButtonsNumberLayout = new QGridLayout;
     pButtonsNumberLayout->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
 
@@ -110,6 +113,13 @@ void MainWindow::CreatePlayButtons()
         pButtonsNumberLayout->addWidget(pNumberButton,nRow/nButtonsInRowCnt, splitCouner);
     }
 
+
+    QPushButton* pSaveGameButton = new QPushButton("save to file");
+    pSaveGameButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    //connect signal and slots
+    QObject::connect(pSaveGameButton,&QPushButton::clicked,this,&MainWindow::OnSaveToFileClicked);
+
+    pMainButtonLayout->addWidget(pSaveGameButton);
 
 
     QGridLayout* pMainLayout = GetMainLayout();
@@ -179,16 +189,22 @@ void MainWindow::OnButtonClicked()
 {
     QPushButton* pButton = qobject_cast<QPushButton*>(sender());
     if (pButton) // this is the type we expect
-     {
-         const QString& buttonText = pButton->text();
+    {
 
-         QTableView*  pPlayArea = findChild<QTableView*>("play_area");
-         if(pPlayArea)
-         {
+        const QString& buttonText = pButton->text();
+
+        QTableView*  pPlayArea = findChild<QTableView*>("play_area");
+        if(pPlayArea)
+        {
             QModelIndex index = pPlayArea->selectionModel()->currentIndex();
             m_sudokuModel.setData(index,buttonText,Qt::EditRole);
             pPlayArea->setFocus();
-         }
+        }
+
+        if(m_sudokuModel.IsGameFinished()){
+            QMessageBox::information(this, m_sudokuModel.GetGameName(), "Game over.");
+        }
+
     }
 }
 
@@ -213,4 +229,13 @@ void MainWindow::OnLvlSelected()
         CreatePlayArea();
         CreatePlayButtons();
     }
+}
+
+void MainWindow::OnSaveToFileClicked()
+{
+    //получение пути, имени файла и его сохранение с
+    //возможностью указания места на диске.
+
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Text files (*.txt)"));
+    m_sudokuModel.SaveGame(fileName);
 }

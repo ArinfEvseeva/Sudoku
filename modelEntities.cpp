@@ -9,6 +9,8 @@ void DifficultLvlBase::CreateNewGame(LevelBuilder* pBuilder)
     pBuilder->MakeLevel(this);
 }
 
+
+
 void DifficultLvlBase::Init()
 {
     for(int nRow = 0; nRow < GetRowsCnt(); ++ nRow)
