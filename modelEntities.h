@@ -115,10 +115,10 @@ public:
   virtual int GetColumnsCnt() const = 0;
   virtual int GetMaxValue() const = 0;
   virtual int GetMaxInvisibleCells() const = 0;
-
   virtual std::unique_ptr<DifficultLvlBase> Clone() const = 0;
 
-  friend QTextStream& operator <<(QTextStream& stream, const DifficultLvlBase& lvl)
+
+  friend QTextStream& operator << (QTextStream& stream, const DifficultLvlBase& lvl)
   {
       for(int nRow = 0; nRow < lvl.GetRowsCnt(); ++nRow)
       {

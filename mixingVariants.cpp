@@ -4,12 +4,8 @@
 
 int Randomizer::GetValue(int nMin, int nMax)
 {
-   int nOutput = QRandomGenerator::global()->bounded(nMin, nMax + 1);
-  // qDebug()<< nOutput;
-   return nOutput;
+    return QRandomGenerator::global()->bounded(nMin, nMax + 1);
 }
-
-
 
 void TranspositionVariant::Invoke(DifficultLvlBase *pCurrentLvl)
 {
@@ -36,14 +32,14 @@ void SwapRowsSmallVariant::Invoke(DifficultLvlBase *pCurrentLvl)
     int nArea = Randomizer::GetValue(0, nCellCounting);
     int nline1 = Randomizer::GetValue(0, nCellCounting);
 
-     //номер 1 строки для обмена
+    //номер 1 строки для обмена
     int nRow1 = nArea * nCellCounting + nline1;
 
     int nline2 = Randomizer::GetValue(0, nCellCounting);
     while (nline1 == nline2)
         nline2 = Randomizer::GetValue(0, nCellCounting);
 
-     //номер 2 строки для обмена
+    //номер 2 строки для обмена
     int nRow2 = nArea * nCellCounting + nline2;
 
     GameTable& gametable = pCurrentLvl->GetOriginalTable();
@@ -79,7 +75,7 @@ void SwapRowsAreaVariant::Invoke(DifficultLvlBase *pCurrentLvl)
         nArea2 = Randomizer::GetValue(0, nCellCounting);
 
 
-     GameTable& gametable = pCurrentLvl->GetOriginalTable();
+    GameTable& gametable = pCurrentLvl->GetOriginalTable();
 
     for(int i = 0; i < nCellCounting; ++i)
     {
@@ -93,7 +89,6 @@ void SwapRowsAreaVariant::Invoke(DifficultLvlBase *pCurrentLvl)
 
             if(pFirstCell && pSecondCell)
                 pFirstCell->Swap(*pSecondCell);
-
         }
     }
 }
@@ -151,7 +146,6 @@ void SudokuGenerator::MakeInvisibleSomeCells(DifficultLvlBase *pCurrentLvl)
         --nMaxInvisibleCells;
 
     }
-
 }
 
 void SudokuGenerator::MakeInvisibleRandomRowAndColumn(DifficultLvlBase *pCurrentLvl)

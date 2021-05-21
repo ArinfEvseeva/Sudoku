@@ -56,7 +56,6 @@ void MainWindow::CreatePlayArea()
     //pMainLayout.set
     pMainLayout->addWidget(pPlayArea,0,0);
 
-
     //скрытие вертикальной нумерации
     QHeaderView* pVerticalHeader = new QHeaderView(Qt::Orientation::Vertical,pPlayArea);
     pVerticalHeader->hide();
@@ -124,7 +123,6 @@ void MainWindow::CreatePlayButtons()
 
     QGridLayout* pMainLayout = GetMainLayout();
     pMainLayout->addLayout(pMainButtonLayout,0,1);
-
 }
 
 void MainWindow::CreateLvlsMenu()
@@ -201,10 +199,8 @@ void MainWindow::OnButtonClicked()
             pPlayArea->setFocus();
         }
 
-        if(m_sudokuModel.IsGameFinished()){
+        if(m_sudokuModel.IsGameFinished())
             QMessageBox::information(this, m_sudokuModel.GetGameName(), "Game over.");
-        }
-
     }
 }
 
