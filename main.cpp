@@ -7,8 +7,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow test;
-    test.show();
+    MainWindow sudokuGame;
+    sudokuGame.show();
     //MainWindow w;
     //w.show();
 

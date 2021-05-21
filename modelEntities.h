@@ -61,6 +61,19 @@ public:
         m_table.push_back(cell);
     }
 
+    GameTable& operator =(const GameTable& other)
+    {
+       if(this == &other)
+            return *this;
+
+       m_table.clear();
+
+       for(const Cell& currCell : other.m_table)
+            m_table.push_back(currCell);
+
+       return *this;
+    }
+
 
 private:
     mutable QVector<Cell> m_table;
@@ -83,6 +96,9 @@ public:
   GameTable& GetPlayingTable() {return  m_playingTable;}
   const GameTable& GetPlayingTable() const {return  m_playingTable;}
 
+  void CopyOriginalToPlayingTable(){ m_playingTable = m_originalTable;}
+
+
   virtual int GetCellCountingRowAndColumnForRegion() const = 0;
   virtual int GetDifficultValue() const = 0;
   virtual int GetRowsCnt() const = 0;
@@ -97,7 +113,7 @@ public:
 private:
    void Init();
 
-   GameTable m_originalTable; //матрица игры (сгенерированнная)
+   GameTable m_originalTable; //матрица игры (сгенерированнная). решенная
    GameTable m_playingTable; //матрица игры (игровая)
 };
 

@@ -17,8 +17,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
 public slots:
-
     void OnButtonClicked();
+    void OnNewGameClicked();
     void OnLvlSelected();
 
 signals:

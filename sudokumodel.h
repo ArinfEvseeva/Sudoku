@@ -27,14 +27,12 @@ public:
     bool IsVisibilityCellLocked(int nRow, int nCol) const;
 
 
-    bool IsCellChangingLocked(int nRow, int nCol);
-    bool IsRequiredValue(int nRow, int nCol, const QString& value);
+    bool IsCellChangingLocked(int nRow, int nCol) const;
+    bool IsRequiredValue(int nRow, int nCol, const QString& value) const;
     void SetState(int nRow, int nCol,CellState state);
 
 private:
-
     Cell* GetPlayingCell(int nRow, int nCol) const;
-
     mutable std::unique_ptr<DifficultLvlBase> m_pLevel;
 };
 
@@ -43,7 +41,6 @@ private:
 class LevelsFactory
 {
 public:
-
     static  std::unique_ptr<DifficultLvlBase> Create(const QString& strDifficultName);
     static QVector<QString> GetLevelsName();
     static std::vector<std::unique_ptr<DifficultLvlBase>>& GetAvailableLevels();
@@ -55,11 +52,9 @@ public:
 class LevelBuilder
 {
 public:
-
     void MakeLevel(DifficultLvlBase* pCurrentLvl);
 
 private:
-
     //генерация основной базовой сетки
     void CreateBaseGrid(DifficultLvlBase* pCurrentLvl);
     //перетасовка сетки
@@ -71,7 +66,6 @@ class SudokuModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-
     SudokuModel();
 
     int rowCount( const QModelIndex &parent = QModelIndex() ) const override;
@@ -81,6 +75,8 @@ public:
 
     int GetDifficultValue() const;
     void SetDifficult(const QString& strDifficultName);
+
+    void NewGame();
 
 private:
 

@@ -50,7 +50,6 @@ public:
     void Invoke(DifficultLvlBase* pCurrentLvl) override;
 };
 
-
 // 5 Обмен двух районов по вертикали
 class SwapColumnsAreaVariant : public MixingVariantBase
 {
@@ -69,14 +68,12 @@ public:
 
     void Invoke(DifficultLvlBase* pCurrentLvl);
 
-
 private:
     void InitGenerationVariants();
 
     //примение алгоритмов смешивания значений
     void MixOriginalGrid(DifficultLvlBase* pCurrentLvl);
-    //копирование эталонной сетки в игровую
-    void CopyOriginalToPlayGrid(DifficultLvlBase* pCurrentLvl);
+
     //скрытие некоторых ячеек игровой сетки
     void MakeInvisibleSomeCells(DifficultLvlBase* pCurrentLvl);
 

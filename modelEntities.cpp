@@ -18,7 +18,7 @@ void DifficultLvlBase::Init()
             Cell newCell(nRow, nCol);
             newCell.SetValue("0");
             m_originalTable.push_back(newCell);
-            m_playingTable.push_back(newCell);
+           // m_playingTable.push_back(newCell);
         }
     }
 }

@@ -117,7 +117,7 @@ SudokuGenerator::SudokuGenerator(int nMaxAttemptsCnt) : m_nMaxAttemptsCnt(nMaxAt
 void SudokuGenerator::Invoke(DifficultLvlBase* pCurrentLvl)
 {
     MixOriginalGrid(pCurrentLvl);
-    CopyOriginalToPlayGrid(pCurrentLvl);
+    pCurrentLvl->CopyOriginalToPlayingTable();
     MakeInvisibleSomeCells(pCurrentLvl);
 }
 
@@ -138,21 +138,6 @@ void SudokuGenerator::MixOriginalGrid(DifficultLvlBase *pCurrentLvl)
         m_levels[nVariant]->Invoke(pCurrentLvl);
         --m_nMaxAttemptsCnt;
     }
-}
-
-void SudokuGenerator::CopyOriginalToPlayGrid(DifficultLvlBase *pCurrentLvl)
-{
-    for(int nRow = 0; nRow < pCurrentLvl->GetRowsCnt(); ++nRow)
-    {
-        for(int nCol = 0; nCol < pCurrentLvl->GetColumnsCnt(); ++nCol)
-        {
-            Cell* pOrigCell = pCurrentLvl->GetOriginalTable().GetCell(nRow, nCol);
-            Cell* pPlayingCell = pCurrentLvl->GetPlayingTable().GetCell(nRow, nCol);
-            *pPlayingCell = *pOrigCell;
-        }
-
-    }
-
 }
 
 void SudokuGenerator::MakeInvisibleSomeCells(DifficultLvlBase *pCurrentLvl)

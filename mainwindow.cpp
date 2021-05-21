@@ -76,11 +76,11 @@ void MainWindow::CreatePlayArea()
 
 void MainWindow::CreatePlayButtons()
 {
-
-
     QVBoxLayout* pMainButtonLayout = new QVBoxLayout();
     pMainButtonLayout->setObjectName(QString::fromUtf8("play_buttons"));
     QPushButton* pNewGameButton = new QPushButton("new game");
+    //connect signal and slots
+    QObject::connect(pNewGameButton,&QPushButton::clicked,this,&MainWindow::OnNewGameClicked);
 
     pMainButtonLayout->addWidget(pNewGameButton);
 
@@ -192,6 +192,15 @@ void MainWindow::OnButtonClicked()
     }
 }
 
+void MainWindow::OnNewGameClicked()
+{
+    DestroyPlayArea();
+    DestroyPlayButtons();
+    m_sudokuModel.NewGame();
+    CreatePlayArea();
+    CreatePlayButtons();
+}
+
 void MainWindow::OnLvlSelected()
 {
     QAction* pCheckedLvl = qobject_cast<QAction*>(sender());
@@ -204,5 +213,4 @@ void MainWindow::OnLvlSelected()
         CreatePlayArea();
         CreatePlayButtons();
     }
-
 }
