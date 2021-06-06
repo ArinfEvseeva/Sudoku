@@ -11,6 +11,7 @@
 //http://itnotesblog.ru/note.php?id=159
 
 
+
 //Сама игра (механика)
 class SudokuGame
 {
@@ -37,11 +38,12 @@ public:
 
     void Save(const QString& strPath) const;
 
+    Cell* GetPlayingCell(int nRow, int nCol) const;
 
 private:
-    Cell* GetPlayingCell(int nRow, int nCol) const;
     mutable std::unique_ptr<DifficultLvlBase> m_pLevel;
 };
+
 
 
 //фабрика для генерации уровня

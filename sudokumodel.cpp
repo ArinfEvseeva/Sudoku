@@ -1,5 +1,6 @@
 #include "mixingVariants.h"
 #include "sudokumodel.h"
+#include "sudokusolvechecker.h"
 #include <QFile>
 #include <QMessageBox>
 #include <QSize>
@@ -254,6 +255,11 @@ void SudokuGame::SetState(int nRow, int nCol, CellState state)
 
 bool SudokuGame::IsFinished() const
 {
+
+    SudokuSolveChecker checker(m_pLevel.get());
+    if(checker.IsSolved())
+        return true;
+
     for(int nRow = 0; nRow < GetLevel()->GetRowsCnt(); ++nRow)
     {
         for(int nCol = 0; nCol < GetLevel()->GetColumnsCnt(); ++nCol)
@@ -319,3 +325,4 @@ void LevelBuilder::MixGrid(DifficultLvlBase* pCurrentLvl)
 {
     SudokuGenerator().Invoke(pCurrentLvl);
 }
+

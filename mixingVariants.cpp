@@ -111,6 +111,7 @@ SudokuGenerator::SudokuGenerator(int nMaxAttemptsCnt) : m_nMaxAttemptsCnt(nMaxAt
 
 void SudokuGenerator::Invoke(DifficultLvlBase* pCurrentLvl)
 {
+
     MixOriginalGrid(pCurrentLvl);
     pCurrentLvl->CopyOriginalToPlayingTable();
     MakeInvisibleSomeCells(pCurrentLvl);

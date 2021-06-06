@@ -7,6 +7,55 @@ void DifficultLvlBase::CreateNewGame(LevelBuilder* pBuilder)
     pBuilder->MakeLevel(this);
 }
 
+QVector<Cell *> DifficultLvlBase::GetRegionByNumber(const GameTable &srcTable, int numOfRegion) const
+{
+    int nRowCounterMin = 0;
+    int nColCounterMin = 0;
+
+    int nRowCounterMax = 0;
+    int nColCounterMax = 0;
+
+
+    int nCurRow = 0;
+    int nCurCol = 0;
+    int nCurrentRegion = -1;
+    while (true) {
+        ++nCurrentRegion;
+
+        if(nCurrentRegion == numOfRegion)
+        {
+            nRowCounterMin = nCurRow;
+            nColCounterMin = nCurCol;
+            nRowCounterMax = nRowCounterMin + GetCellCountingRowAndColumnForRegion();
+            nColCounterMax = nColCounterMin + GetCellCountingRowAndColumnForRegion();
+            break;
+
+        }
+
+        nCurCol += GetCellCountingRowAndColumnForRegion();
+        if(nCurCol == GetColumnsCnt())
+        {
+            nCurCol = 0;
+            nCurRow += GetCellCountingRowAndColumnForRegion();
+        }
+    }
+
+
+    QVector<Cell*> result;
+
+    for(int i = nRowCounterMin; i < nRowCounterMax; ++i)
+    {
+
+        for(int j = nColCounterMin; j < nColCounterMax; ++j)
+        {
+            Cell* pCell = srcTable.GetCell(i, j);
+            result.push_back(pCell);
+        }
+    }
+
+    return result;
+}
+
 void DifficultLvlBase::Init()
 {
     for(int nRow = 0; nRow < GetRowsCnt(); ++ nRow)

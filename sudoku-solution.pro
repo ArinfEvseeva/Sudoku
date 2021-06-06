@@ -16,13 +16,15 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     mixingVariants.cpp \
     modelEntities.cpp \
-    sudokumodel.cpp
+    sudokumodel.cpp \
+    sudokusolvechecker.cpp
 
 HEADERS  += \
     constants.h \
     mainwindow.h \
     mixingVariants.h \
     modelEntities.h \
-    sudokumodel.h
+    sudokumodel.h \
+    sudokusolvechecker.h
 
 FORMS    +=

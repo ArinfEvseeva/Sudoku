@@ -84,6 +84,10 @@ public:
        return *this;
     }
 
+    void Clear(){
+        m_table.clear();
+
+    }
 
 private:
     mutable QVector<Cell> m_table;
@@ -108,6 +112,8 @@ public:
 
   void CopyOriginalToPlayingTable(){ m_playingTable = m_originalTable;}
 
+  QVector<Cell*> GetRegionByNumber(const GameTable& srcTable, int numOfRegion) const;
+
 
   virtual int GetCellCountingRowAndColumnForRegion() const = 0;
   virtual int GetDifficultValue() const = 0;
@@ -115,6 +121,7 @@ public:
   virtual int GetColumnsCnt() const = 0;
   virtual int GetMaxValue() const = 0;
   virtual int GetMaxInvisibleCells() const = 0;
+  virtual int GetRegionsCnt() const = 0;
   virtual std::unique_ptr<DifficultLvlBase> Clone() const = 0;
 
 
@@ -157,6 +164,7 @@ public:
     int GetColumnsCnt() const override {return 4;}
     int GetMaxValue() const override {return 4;}
     int GetMaxInvisibleCells() const override {return 12;}
+    int GetRegionsCnt() const override {return 4;}
     std::unique_ptr<DifficultLvlBase> Clone() const override;
 };
 
@@ -170,6 +178,7 @@ public:
     int GetColumnsCnt() const override {return 9;}
     int GetMaxValue() const override {return 9;}
     int GetMaxInvisibleCells() const override {return 50;}
+    int GetRegionsCnt() const override {return 9;}
     std::unique_ptr<DifficultLvlBase> Clone() const override;
 };
 
@@ -183,6 +192,7 @@ public:
     int GetColumnsCnt() const override{return 16;}
     int GetMaxValue() const override {return 16;}
     int GetMaxInvisibleCells() const override {return 130;}
+    int GetRegionsCnt() const override {return 16;}
     std::unique_ptr<DifficultLvlBase> Clone() const override;
 };
 
